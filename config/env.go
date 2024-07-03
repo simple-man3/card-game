@@ -14,14 +14,25 @@ var (
 
 type Env struct {
 	AppPort string
+
+	DbHost     string
+	DbPort     string
+	DbDatabase string
+	DbUsername string
+	DbPassword string
 }
 
-func NewEnv() (*Env, error) {
+func GetInstanceEnv() (*Env, error) {
 	once.Do(func() {
 		initError = godotenv.Load()
 
 		envInstance = &Env{
-			AppPort: getEnv("APP_PORT", ""),
+			AppPort:    getEnv("APP_PORT", ""),
+			DbHost:     getEnv("DB_HOST", ""),
+			DbPort:     getEnv("DB_PORT", ""),
+			DbDatabase: getEnv("DB_DATABASE", ""),
+			DbUsername: getEnv("DB_USERNAME", ""),
+			DbPassword: getEnv("DB_PASSWORD", ""),
 		}
 	})
 
