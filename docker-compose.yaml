@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  mysql:
+    image: mysql
+    container_name: card-game-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: card_game
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql-db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - card-game
+
+volumes:
+  mysql-db:
+
+networks:
+  card-game:
+    driver: bridge
