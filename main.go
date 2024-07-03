@@ -3,10 +3,15 @@ package main
 import (
 	"card-game/config"
 	"card-game/database"
+	_ "card-game/docs"
 	"card-game/server"
 	"log"
 )
 
+// @title Card Game API
+// @version 1.0
+// @host localhost:8080
+// @BasePath /api
 func main() {
 	serv := server.NewServer()
 
