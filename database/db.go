@@ -37,7 +37,11 @@ func AutoMigrate() error {
 		return errors.New("database connection is nil")
 	}
 
-	if err := DBConn.AutoMigrate(&models.User{}); err != nil {
+	if err := DBConn.AutoMigrate(
+		&models.User{},
+		&models.Wallet{},
+		&models.Transaction{},
+	); err != nil {
 		return err
 	}
 
