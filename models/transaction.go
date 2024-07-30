@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"card-game/database"
+	"gorm.io/gorm"
+)
 
 type Transaction struct {
 	gorm.Model
@@ -9,4 +12,15 @@ type Transaction struct {
 	Action   string
 
 	Wallet Wallet
+}
+
+func CreateTransaction(trx *Transaction) (*Transaction, error) {
+	db := database.DBConn
+
+	res := db.Create(&trx)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return trx, nil
 }
