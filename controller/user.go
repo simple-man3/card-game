@@ -3,15 +3,28 @@ package controller
 import (
 	"card-game/models"
 	"card-game/services"
-	"fmt"
+	"card-game/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
 func CreateUser(c *fiber.Ctx) error {
-	result := services.ExistUser(models.User{
-		Name: "text",
-	})
-	fmt.Println(result)
+	var user models.User
 
-	return c.SendString("create user")
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	if errs := validator.Validator.Struct(user); errs != nil {
+		return validator.GetValidationErrResponse(errs, c)
+	}
+
+	if err := services.CreateUser(&user); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to create user",
+		})
+	}
+
+	return c.Status(fiber.StatusBadRequest).JSON(user)
 }

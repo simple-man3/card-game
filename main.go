@@ -5,6 +5,7 @@ import (
 	"card-game/database"
 	_ "card-game/docs"
 	"card-game/server"
+	"card-game/validator"
 	"log"
 )
 
@@ -28,6 +29,10 @@ func main() {
 	}
 
 	if err := database.AutoMigrate(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := validator.InitValidator(); err != nil {
 		log.Fatal(err)
 	}
 
