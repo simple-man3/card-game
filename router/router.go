@@ -10,6 +10,13 @@ func InitRouters(app *fiber.App) {
 	app.Get("/health", controller.Health)
 
 	initSwagger(app)
+	initApi(app)
+}
+
+func initApi(app *fiber.App) {
+	v1 := app.Group("/api/v1")
+
+	initUserRouters(v1)
 }
 
 func initSwagger(app *fiber.App) {

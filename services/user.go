@@ -26,3 +26,12 @@ func Update(user models.User) error {
 
 	return nil
 }
+
+func ExistUser(user models.User) any {
+	db := database.DBConn
+
+	var count int64
+	result := db.Find(&user).Count(&count)
+
+	return result
+}
