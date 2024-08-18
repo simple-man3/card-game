@@ -30,11 +30,5 @@ func Update(user models.User) error {
 func ExistUser(user models.User) bool {
 	db := database.DBConn
 
-	var userFind models.User
-	result := db.Where(&user).First(&userFind)
-	if result.Error != nil {
-		return false
-	}
-
-	return true
+	return db.Where(user).Find(&user).RowsAffected != 0
 }

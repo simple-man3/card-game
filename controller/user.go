@@ -8,13 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type Day int
-
 func CreateUser(c *fiber.Ctx) error {
 	var user models.User
 
 	if err := c.BodyParser(&user); err != nil {
-		return responses.BodyParseErrToResponse(c)
+		return responses.BodyParseErrToResponse()
 	}
 
 	if errs := validator.Validator.Struct(user); errs != nil {
@@ -22,7 +20,7 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	if err := services.CreateUser(&user); err != nil {
-		return responses.ServiceErrorToResponse(err, c)
+		return responses.ServiceErrorToResponse(err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(user)

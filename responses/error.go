@@ -31,7 +31,7 @@ func generateErrorResponses(errs error) []ErrorResponse {
 	return errorResponses
 }
 
-func BodyParseErrToResponse(c *fiber.Ctx) error {
+func BodyParseErrToResponse() error {
 	return &fiber.Error{
 		Code:    fiber.StatusBadRequest,
 		Message: "Invalid request body",
@@ -43,8 +43,9 @@ func ValidationErrToResponse(errs error, c *fiber.Ctx) error {
 		JSON(generateErrorResponses(errs))
 }
 
-func ServiceErrorToResponse(err error, c *fiber.Ctx) error {
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-		"error": err.Error(),
-	})
+func ServiceErrorToResponse(err error) error {
+	return &fiber.Error{
+		Code:    fiber.StatusInternalServerError,
+		Message: err.Error(),
+	}
 }
