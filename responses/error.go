@@ -1,5 +1,10 @@
 package responses
 
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
+)
+
 type (
 	GlobalErrorHandlerResp struct {
 		Success bool   `json:"success"`
@@ -12,3 +17,34 @@ type (
 		Value       any    `json:"value"`
 	}
 )
+
+func generateErrorResponses(errs error) []ErrorResponse {
+	var errorResponses []ErrorResponse
+	for _, err := range errs.(validator.ValidationErrors) {
+		var element ErrorResponse
+		element.FailedField = err.Field()
+		element.Tag = err.Tag()
+		element.Value = err.Value()
+		errorResponses = append(errorResponses, element)
+	}
+
+	return errorResponses
+}
+
+func BodyParseErrToResponse(c *fiber.Ctx) error {
+	return &fiber.Error{
+		Code:    fiber.StatusBadRequest,
+		Message: "Invalid request body",
+	}
+}
+
+func ValidationErrToResponse(errs error, c *fiber.Ctx) error {
+	return c.Status(fiber.StatusBadRequest).
+		JSON(generateErrorResponses(errs))
+}
+
+func ServiceErrorToResponse(err error, c *fiber.Ctx) error {
+	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		"error": err.Error(),
+	})
+}
