@@ -7,14 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	DBConn *gorm.DB
-)
+var DBConn *gorm.DB
 
 func Connect() error {
 	env, _ := config.GetInstanceEnv()
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", env.DbUsername, env.DbPassword, env.DbHost, env.DbPort, env.DbDatabase)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", env.DbUsername, env.DbPassword, env.DbHost, env.DbPort, env.DbDatabase)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {

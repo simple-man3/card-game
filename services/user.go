@@ -5,15 +5,15 @@ import (
 	"card-game/models"
 )
 
-func CreateUser(user *models.User) (*models.User, error) {
+func CreateUser(user *models.User) error {
 	db := database.DBConn
 
 	res := db.Create(&user)
 	if res.Error != nil {
-		return nil, res.Error
+		return res.Error
 	}
 
-	return user, nil
+	return nil
 }
 
 func Update(user models.User) error {
@@ -25,4 +25,10 @@ func Update(user models.User) error {
 	}
 
 	return nil
+}
+
+func ExistUser(user models.User) bool {
+	db := database.DBConn
+
+	return db.Where(user).Find(&user).RowsAffected != 0
 }

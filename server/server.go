@@ -2,6 +2,7 @@ package server
 
 import (
 	"card-game/config"
+	"card-game/responses"
 	"card-game/router"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
@@ -19,7 +20,20 @@ var (
 
 func NewServer() *Server {
 	once.Do(func() {
-		serverInstance = &Server{app: fiber.New()}
+		/**
+		 * toDo
+		 *  [] необходимо переработать глобальный обработчик ошибок
+		 */
+		serverInstance = &Server{
+			app: fiber.New(fiber.Config{
+				ErrorHandler: func(c *fiber.Ctx, err error) error {
+					return c.Status(fiber.StatusBadRequest).JSON(responses.GlobalErrorHandlerResp{
+						Success: false,
+						Message: err.Error(),
+					})
+				},
+			}),
+		}
 	})
 
 	return serverInstance
