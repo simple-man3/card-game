@@ -28,6 +28,19 @@ func UpdateUser(user *models.User, id uint) error {
 	return nil
 }
 
+func GetUserById(id uint) (*models.User, error) {
+	db := database.DBConn
+	user := &models.User{ID: id}
+
+	result := db.First(&user, id)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return user, nil
+}
+
 func ExistUser(user models.User) bool {
 	db := database.DBConn
 
