@@ -1,14 +1,15 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+import "time"
 
 type Wallet struct {
-	gorm.Model
+	ID      uint `gorm:"primarykey"`
 	UserId  uint `gorm:"index"`
 	Balance float64
 
 	User         User
 	Transactions []Transaction
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

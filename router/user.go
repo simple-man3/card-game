@@ -7,4 +7,5 @@ import (
 
 func initUserRouters(router fiber.Router) {
 	router.Post("/user", controller.CreateUser)
+	router.Patch("/user/:id<int>", controller.PatchUser)
 }

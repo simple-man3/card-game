@@ -1,14 +1,15 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+import "time"
 
 type Transaction struct {
-	gorm.Model
+	ID       uint `gorm:"primarykey"`
 	WalletId uint `gorm:"index"`
 	Sum      float64
 	Action   string
 
-	Wallet Wallet
+	Wallet Wallet `json:"wallet"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
