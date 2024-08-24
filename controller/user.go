@@ -66,3 +66,14 @@ func PatchUser(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(user)
 }
+
+func GetUser(c *fiber.Ctx) error {
+	var id, _ = c.ParamsInt("id")
+
+	user, err := services.GetUserById(uint(id))
+	if err != nil {
+		return responses.ServiceErrorToResponse(err)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(user)
+}
