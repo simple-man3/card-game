@@ -41,6 +41,17 @@ func GetUserById(id uint) (*models.User, error) {
 	return user, nil
 }
 
+func DeleteUser(user models.User) error {
+	db := database.DBConn
+
+	result := db.Delete(user)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
 func ExistUser(user models.User) bool {
 	db := database.DBConn
 

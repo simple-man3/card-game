@@ -77,3 +77,15 @@ func GetUser(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(user)
 }
+
+func DeleteUser(c *fiber.Ctx) error {
+	var id, _ = c.ParamsInt("id")
+	user := models.User{ID: uint(id)}
+
+	err := services.DeleteUser(user)
+	if err != nil {
+		return responses.ServiceErrorToResponse(err)
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
