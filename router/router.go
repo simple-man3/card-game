@@ -17,6 +17,7 @@ func initApi(app *fiber.App) {
 	v1 := app.Group("/api/v1")
 
 	initUserRouters(v1)
+	initWalletRouters(v1)
 }
 
 func initSwagger(app *fiber.App) {

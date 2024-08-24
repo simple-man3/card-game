@@ -11,7 +11,7 @@ type User struct {
 	Email  string            `gorm:"unique;not null" json:"email"`
 	Status consts.UserStatus `gorm:"not null" json:"status"`
 
-	Wallet []Wallet `json:"wallets"`
+	Wallet *Wallet `json:"wallet,omitempty"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

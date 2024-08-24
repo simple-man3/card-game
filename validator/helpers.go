@@ -11,7 +11,7 @@ func CheckUserExist(fl validator.FieldLevel) bool {
 	var user models.User
 	fillModel(&user, fl)
 
-	return !services.ExistUser(user)
+	return services.ExistUser(user)
 }
 
 func fillModel(model any, fl validator.FieldLevel) {

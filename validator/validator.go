@@ -23,10 +23,16 @@ func InitValidator() error {
 }
 
 func RegisterCustomValidators() error {
-	err := Validator.RegisterValidation("user-exist", func(fl validator.FieldLevel) bool {
+	err := Validator.RegisterValidation("user-not-exist", func(fl validator.FieldLevel) bool {
+		return !CheckUserExist(fl)
+	})
+	if err != nil {
+		return err
+	}
+
+	err = Validator.RegisterValidation("user-exist", func(fl validator.FieldLevel) bool {
 		return CheckUserExist(fl)
 	})
-
 	if err != nil {
 		return err
 	}
