@@ -1,15 +1,17 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Wallet struct {
-	ID      uint `gorm:"primarykey"`
-	UserId  uint `gorm:"index"`
-	Balance float64
+	ID      uint    `gorm:"primarykey" json:"id"`
+	UserId  uint    `gorm:"index" json:"user_id"`
+	Balance float64 `gorm:"type:decimal(10,2);" json:"balance"`
 
-	User         User
-	Transactions []Transaction
+	User         User          `json:"user"`
+	Transactions []Transaction `json:"transactions"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
