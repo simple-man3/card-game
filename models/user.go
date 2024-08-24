@@ -2,14 +2,17 @@ package models
 
 import (
 	"card-game/consts"
-	"gorm.io/gorm"
+	"time"
 )
 
 type User struct {
-	gorm.Model
+	ID     uint              `gorm:"primarykey" json:"id"`
 	Name   string            `gorm:"unique;not null" json:"name"`
 	Email  string            `gorm:"unique;not null" json:"email"`
 	Status consts.UserStatus `gorm:"not null" json:"status"`
 
-	Wallet []Wallet
+	Wallet []Wallet `json:"wallets"`
+
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

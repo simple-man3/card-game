@@ -16,10 +16,11 @@ func CreateUser(user *models.User) error {
 	return nil
 }
 
-func Update(user models.User) error {
+func UpdateUser(user *models.User, id uint) error {
 	db := database.DBConn
 
-	result := db.Save(&user)
+	user.ID = id
+	result := db.Model(&models.User{}).Where("id = ?", id).Updates(user)
 	if result.Error != nil {
 		return result.Error
 	}
