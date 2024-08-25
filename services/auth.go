@@ -5,7 +5,6 @@ import (
 	"card-game/models"
 	"card-game/session"
 	"errors"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -49,16 +48,9 @@ func generateToken(email string) (string, error) {
 
 	env, _ := config.GetInstanceEnv()
 
-	t, err := token.SignedString([]byte(env.JwtSecret))
-	if err != nil {
-		return "", err
-	}
-
-	return t, nil
+	return token.SignedString([]byte(env.JwtSecret))
 }
 
 func checkPasswordHash(password, hashedPassword string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	fmt.Println(err)
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
 }
