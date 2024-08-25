@@ -6,6 +6,6 @@ import (
 )
 
 func initWalletRouters(router fiber.Router) {
-	router.Get("/wallet/:id<int>", controller.GetWallet)
+	//router.Get("/wallet/:id<int>", controller.GetWallet)
 	router.Post("/wallet", controller.CreateWallet)
 }

@@ -20,6 +20,8 @@ type Env struct {
 	DbDatabase string
 	DbUsername string
 	DbPassword string
+
+	JwtSecret string
 }
 
 func GetInstanceEnv() (*Env, error) {
@@ -33,6 +35,7 @@ func GetInstanceEnv() (*Env, error) {
 			DbDatabase: getEnv("DB_DATABASE", ""),
 			DbUsername: getEnv("DB_USERNAME", ""),
 			DbPassword: getEnv("DB_PASSWORD", ""),
+			JwtSecret:  getEnv("JWT_SECRET", ""),
 		}
 	})
 

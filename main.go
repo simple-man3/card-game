@@ -5,6 +5,7 @@ import (
 	"card-game/database"
 	_ "card-game/docs"
 	"card-game/server"
+	"card-game/session"
 	"card-game/validator"
 	"log"
 )
@@ -35,6 +36,8 @@ func main() {
 	if err := validator.InitValidator(); err != nil {
 		log.Fatal(err)
 	}
+
+	session.InitSession()
 
 	if err := serv.Start(); err != nil {
 		log.Fatal(err)
