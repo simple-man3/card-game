@@ -6,5 +6,7 @@ import (
 )
 
 func initAuthRouters(router fiber.Router) {
-	router.Post("/login", controller.Login)
+	authController := controller.NewAuthController()
+
+	router.Post("/login", authController.Login)
 }

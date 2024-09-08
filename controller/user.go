@@ -10,7 +10,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CreateUser(c *fiber.Ctx) error {
+type UserController struct {
+	UserService *services.UserService
+}
+
+func NewUserController() *UserController {
+	userService := services.NewUserService()
+
+	return &UserController{
+		UserService: userService,
+	}
+}
+
+func (controller *UserController) CreateUser(c *fiber.Ctx) error {
 	var request requests.CreateUserRequest
 
 	if err := c.BodyParser(&request); err != nil {
@@ -31,14 +43,14 @@ func CreateUser(c *fiber.Ctx) error {
 		return responses.ServiceErrorToResponse(err)
 	}
 
-	if err := services.CreateUser(&user); err != nil {
+	if err := controller.UserService.CreateUser(&user); err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
-func PatchUser(c *fiber.Ctx) error {
+func (controller *UserController) PatchUser(c *fiber.Ctx) error {
 	var request requests.PatchUserRequest
 	var id, _ = c.ParamsInt("id")
 
@@ -60,17 +72,17 @@ func PatchUser(c *fiber.Ctx) error {
 		return responses.ServiceErrorToResponse(err)
 	}
 
-	if err := services.UpdateUser(&user, uint(id)); err != nil {
+	if err := controller.UserService.UpdateUser(&user, uint(id)); err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func GetUser(c *fiber.Ctx) error {
+func (controller *UserController) GetUser(c *fiber.Ctx) error {
 	var id, _ = c.ParamsInt("id")
 
-	user, err := services.GetUserById(uint(id))
+	user, err := controller.UserService.GetUserById(uint(id))
 	if err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}
@@ -78,11 +90,11 @@ func GetUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(user)
 }
 
-func DeleteUser(c *fiber.Ctx) error {
+func (controller *UserController) DeleteUser(c *fiber.Ctx) error {
 	var id, _ = c.ParamsInt("id")
 	user := models.User{ID: uint(id)}
 
-	err := services.DeleteUser(user)
+	err := controller.UserService.DeleteUser(user)
 	if err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}

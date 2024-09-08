@@ -6,8 +6,10 @@ import (
 )
 
 func initUserRouters(router fiber.Router) {
-	router.Post("/user", controller.CreateUser)
-	router.Patch("/user/:id<int>", controller.PatchUser)
-	router.Get("/user/:id<int>", controller.GetUser)
-	router.Delete("/user/:id<int>", controller.DeleteUser)
+	userController := controller.NewUserController()
+
+	router.Post("/user", userController.CreateUser)
+	router.Patch("/user/:id<int>", userController.PatchUser)
+	router.Get("/user/:id<int>", userController.GetUser)
+	router.Delete("/user/:id<int>", userController.DeleteUser)
 }

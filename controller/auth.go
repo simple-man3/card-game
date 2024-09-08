@@ -8,7 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Login(c *fiber.Ctx) error {
+type AuthController struct {
+	AuthService *services.AuthService
+}
+
+func NewAuthController() *AuthController {
+	authUser := services.NewAuthService()
+
+	return &AuthController{
+		AuthService: authUser,
+	}
+}
+
+func (ac AuthController) Login(c *fiber.Ctx) error {
 	var request requests.LoginRequest
 
 	if err := c.BodyParser(&request); err != nil {
@@ -19,7 +31,7 @@ func Login(c *fiber.Ctx) error {
 		return responses.ValidationErrToResponse(errs, c)
 	}
 
-	token, err := services.Auth(c, request.Email, request.Password)
+	token, err := ac.AuthService.Auth(c, request.Email, request.Password)
 	if err != nil {
 		return fiber.ErrUnauthorized
 	}
