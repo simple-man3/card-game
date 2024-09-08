@@ -4,25 +4,27 @@ import (
 	"card-game/database"
 	"card-game/models"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type UserService struct {
+	db *gorm.DB
 }
 
 func NewUserService() *UserService {
-	return &UserService{}
+	return &UserService{
+		db: database.DBConn,
+	}
 }
 
 func (us UserService) CreateUser(user *models.User) error {
-	db := database.DBConn
-
 	hashPassword, err := us.hashPassword(user.Password)
 	if err != nil {
 		return err
 	}
 
 	user.Password = hashPassword
-	res := db.Create(&user)
+	res := us.db.Create(&user)
 	if res.Error != nil {
 		return res.Error
 	}
@@ -31,10 +33,8 @@ func (us UserService) CreateUser(user *models.User) error {
 }
 
 func (us UserService) UpdateUser(user *models.User, id uint) error {
-	db := database.DBConn
-
 	user.ID = id
-	result := db.Model(&models.User{}).Where("id = ?", id).Updates(user)
+	result := us.db.Model(&models.User{}).Where("id = ?", id).Updates(user)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -43,10 +43,9 @@ func (us UserService) UpdateUser(user *models.User, id uint) error {
 }
 
 func (us UserService) GetUserById(id uint) (*models.User, error) {
-	db := database.DBConn
 	user := &models.User{ID: id}
 
-	result := db.First(&user, id)
+	result := us.db.First(&user, id)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -56,9 +55,7 @@ func (us UserService) GetUserById(id uint) (*models.User, error) {
 }
 
 func (us UserService) DeleteUser(user models.User) error {
-	db := database.DBConn
-
-	result := db.Delete(user)
+	result := us.db.Delete(user)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -67,13 +64,11 @@ func (us UserService) DeleteUser(user models.User) error {
 }
 
 func (us UserService) ExistUser(user models.User) bool {
-	db := database.DBConn
-
-	return db.Where(user).Find(&user).RowsAffected != 0
+	return us.db.Where(user).Find(&user).RowsAffected != 0
 }
 
 func (us UserService) GetUser(user *models.User, relations []string) error {
-	query := database.DBConn
+	query := us.db
 
 	if len(relations) > 0 {
 		for _, relation := range relations {

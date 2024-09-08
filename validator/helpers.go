@@ -3,6 +3,7 @@ package validator
 import (
 	"card-game/models"
 	"card-game/services"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"reflect"
 )
@@ -11,7 +12,10 @@ func CheckUserExist(fl validator.FieldLevel) bool {
 	var user models.User
 	fillModel(&user, fl)
 
-	return services.ExistUser(user)
+	userService := services.NewUserService()
+
+	fmt.Println(userService.ExistUser(user))
+	return userService.ExistUser(user)
 }
 
 func fillModel(model any, fl validator.FieldLevel) {
