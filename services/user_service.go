@@ -6,10 +6,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(user *models.User) error {
+type UserService struct {
+}
+
+func NewUserService() *UserService {
+	return &UserService{}
+}
+
+func (us UserService) CreateUser(user *models.User) error {
 	db := database.DBConn
 
-	hashPassword, err := hashPassword(user.Password)
+	hashPassword, err := us.hashPassword(user.Password)
 	if err != nil {
 		return err
 	}
@@ -23,7 +30,7 @@ func CreateUser(user *models.User) error {
 	return nil
 }
 
-func UpdateUser(user *models.User, id uint) error {
+func (us UserService) UpdateUser(user *models.User, id uint) error {
 	db := database.DBConn
 
 	user.ID = id
@@ -35,7 +42,7 @@ func UpdateUser(user *models.User, id uint) error {
 	return nil
 }
 
-func GetUserById(id uint) (*models.User, error) {
+func (us UserService) GetUserById(id uint) (*models.User, error) {
 	db := database.DBConn
 	user := &models.User{ID: id}
 
@@ -48,7 +55,7 @@ func GetUserById(id uint) (*models.User, error) {
 	return user, nil
 }
 
-func DeleteUser(user models.User) error {
+func (us UserService) DeleteUser(user models.User) error {
 	db := database.DBConn
 
 	result := db.Delete(user)
@@ -59,13 +66,13 @@ func DeleteUser(user models.User) error {
 	return nil
 }
 
-func ExistUser(user models.User) bool {
+func (us UserService) ExistUser(user models.User) bool {
 	db := database.DBConn
 
 	return db.Where(user).Find(&user).RowsAffected != 0
 }
 
-func GetUser(user *models.User, relations []string) error {
+func (us UserService) GetUser(user *models.User, relations []string) error {
 	query := database.DBConn
 
 	if len(relations) > 0 {
@@ -82,7 +89,7 @@ func GetUser(user *models.User, relations []string) error {
 	return nil
 }
 
-func hashPassword(password string) (string, error) {
+func (us UserService) hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	return string(bytes), err

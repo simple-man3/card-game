@@ -15,20 +15,32 @@ const (
 	ttlJwtToken = time.Hour / 2
 )
 
-func Auth(c *fiber.Ctx, email, password string) (string, error) {
+type AuthService struct {
+	UserService *UserService
+}
+
+func NewAuthService() *AuthService {
+	userService := NewUserService()
+
+	return &AuthService{
+		UserService: userService,
+	}
+}
+
+func (as AuthService) Auth(c *fiber.Ctx, email, password string) (string, error) {
 	user := models.User{
 		Email: email,
 	}
 
-	if err := GetUser(&user, []string{}); err != nil {
+	if err := as.UserService.GetUser(&user, []string{}); err != nil {
 		return "", err
 	}
 
-	if !checkPasswordHash(password, user.Password) {
+	if !as.checkPasswordHash(password, user.Password) {
 		return "", errors.New("логин или пароль не действителен")
 	}
 
-	token, err := generateToken(email)
+	token, err := as.generateToken(email)
 	if err != nil {
 		return "", err
 	}
@@ -39,7 +51,7 @@ func Auth(c *fiber.Ctx, email, password string) (string, error) {
 	return token, nil
 }
 
-func generateToken(email string) (string, error) {
+func (as AuthService) generateToken(email string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 
@@ -51,6 +63,6 @@ func generateToken(email string) (string, error) {
 	return token.SignedString([]byte(env.JwtSecret))
 }
 
-func checkPasswordHash(password, hashedPassword string) bool {
+func (as AuthService) checkPasswordHash(password, hashedPassword string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
 }

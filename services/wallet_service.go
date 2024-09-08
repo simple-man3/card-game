@@ -5,7 +5,13 @@ import (
 	"card-game/models"
 )
 
-func CreateWallet(wallet *models.Wallet) error {
+type WalletService struct{}
+
+func NewWalletService() *WalletService {
+	return &WalletService{}
+}
+
+func (ws WalletService) CreateWallet(wallet *models.Wallet) error {
 	db := database.DBConn
 
 	res := db.Create(&wallet)
@@ -17,7 +23,7 @@ func CreateWallet(wallet *models.Wallet) error {
 	return nil
 }
 
-func PutMoney(amount float64, wallet *models.Wallet) error {
+func (ws WalletService) PutMoney(amount float64, wallet *models.Wallet) error {
 	db := database.DBConn
 
 	wallet.Balance += amount
@@ -30,7 +36,7 @@ func PutMoney(amount float64, wallet *models.Wallet) error {
 	return nil
 }
 
-func TakeMoney(amount float64, wallet *models.Wallet) error {
+func (ws WalletService) TakeMoney(amount float64, wallet *models.Wallet) error {
 	db := database.DBConn
 
 	wallet.Balance -= amount
@@ -43,7 +49,7 @@ func TakeMoney(amount float64, wallet *models.Wallet) error {
 	return nil
 }
 
-func GetWalletById(id uint, relations []string) (*models.Wallet, error) {
+func (ws WalletService) GetWalletById(id uint, relations []string) (*models.Wallet, error) {
 	query := database.DBConn
 	wallet := models.Wallet{ID: id}
 

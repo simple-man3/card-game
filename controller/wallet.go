@@ -10,7 +10,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CreateWallet(c *fiber.Ctx) error {
+type WalletController struct {
+	WalletController *services.WalletService
+}
+
+func NewWalletController() *WalletController {
+	walletService := services.NewWalletService()
+
+	return &WalletController{
+		WalletController: walletService,
+	}
+}
+
+func (wc WalletController) CreateWallet(c *fiber.Ctx) error {
 	var request requests.CreateWalletRequest
 
 	if err := c.BodyParser(&request); err != nil {
@@ -31,11 +43,11 @@ func CreateWallet(c *fiber.Ctx) error {
 		return responses.ServiceErrorToResponse(err)
 	}
 
-	if err := services.CreateWallet(wallet); err != nil {
+	if err := wc.WalletController.CreateWallet(wallet); err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}
 
-	wallet, err = services.GetWalletById(wallet.ID, []string{"User"})
+	wallet, err = wc.WalletController.GetWalletById(wallet.ID, []string{"User"})
 	if err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}
