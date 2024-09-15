@@ -4,8 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/session"
 )
 
-var Session *session.Store
+var Store *session.Store
 
 func InitSession() {
-	Session = session.New()
+	Store = session.New()
 }

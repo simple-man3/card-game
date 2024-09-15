@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if _, err := config.GetInstanceEnv(); err != nil {
+	if err := config.InitEnv(); err != nil {
 		log.Fatal(err)
 	}
 

@@ -1,16 +1,27 @@
 package middleware
 
 import (
+	"card-game/responses"
+	"card-game/services"
 	"card-game/session"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 )
 
 func CheckAuth(c *fiber.Ctx) error {
-	token := c.Get("Authorization")
-	session, _ := session.Session.Get(c)
+	sess, _ := session.Store.Get(c)
 
-	token = session.Get("Dsada")
+	token := c.Get("Authorization")
+	sessToken := sess.Get("Authorization")
+
+	if token == "" && sessToken == nil {
+		return responses.ForbiddenResponse(c)
+	}
+
+	authService := services.NewAuthService()
+	if token != "" {
+		authService.VerifyToken(token)
+	}
 
 	fmt.Println(token)
 	fmt.Println(token)
