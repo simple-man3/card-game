@@ -11,14 +11,14 @@ import (
 )
 
 type WalletController struct {
-	WalletController *services.WalletService
+	walletService *services.WalletService
 }
 
 func NewWalletController() *WalletController {
 	walletService := services.NewWalletService()
 
 	return &WalletController{
-		WalletController: walletService,
+		walletService: walletService,
 	}
 }
 
@@ -43,14 +43,25 @@ func (wc WalletController) CreateWallet(c *fiber.Ctx) error {
 		return responses.ServiceErrorToResponse(err)
 	}
 
-	if err := wc.WalletController.CreateWallet(wallet); err != nil {
+	if err := wc.walletService.CreateWallet(wallet); err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}
 
-	wallet, err = wc.WalletController.GetWalletById(wallet.ID, []string{"User"})
+	wallet, err = wc.walletService.GetWalletById(wallet.ID, models.AuthUser.ID, []string{"User"})
 	if err != nil {
 		return responses.ServiceErrorToResponse(err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(wallet)
+}
+
+func (wc WalletController) Get(c *fiber.Ctx) error {
+	var id, _ = c.ParamsInt("id")
+
+	wallet, err := wc.walletService.GetWalletById(uint(id), models.AuthUser.ID, []string{"User"})
+	if err != nil {
+		return responses.ServiceErrorToResponse(err)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(wallet)
 }

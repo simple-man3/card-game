@@ -11,6 +11,6 @@ func initWalletRouters(router fiber.Router) {
 
 	group := router.Group("/wallet", middleware.CheckAuth)
 
-	//router.Get("/:id<int>", controller.GetWallet)
+	group.Get("/:id<int>", walletController.Get)
 	group.Post("/", walletController.CreateWallet)
 }
