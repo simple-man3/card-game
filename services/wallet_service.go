@@ -49,9 +49,9 @@ func (ws WalletService) TakeMoney(amount float64, wallet *models.Wallet) error {
 	return nil
 }
 
-func (ws WalletService) GetWalletById(id uint, relations []string) (*models.Wallet, error) {
+func (ws WalletService) GetWalletById(id, userId uint, relations []string) (*models.Wallet, error) {
 	query := database.DBConn
-	wallet := models.Wallet{ID: id}
+	wallet := models.Wallet{ID: id, UserId: userId}
 
 	if len(relations) > 0 {
 		for _, relation := range relations {
