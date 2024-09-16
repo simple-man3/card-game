@@ -45,10 +45,7 @@ func (s *Server) InitRouters() error {
 }
 
 func (s *Server) Start() error {
-	env, err := config.GetInstanceEnv()
-	if err != nil {
-		return err
-	}
+	env := config.EnvInstance
 
 	port := fmt.Sprintf(":%s", env.AppPort)
 	if err := s.app.Listen(port); err != nil {

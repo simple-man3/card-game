@@ -10,8 +10,9 @@ import (
 func CheckUserExist(fl validator.FieldLevel) bool {
 	var user models.User
 	fillModel(&user, fl)
+	userService := services.NewUserService()
 
-	return services.ExistUser(user)
+	return userService.ExistUser(user)
 }
 
 func fillModel(model any, fl validator.FieldLevel) {
