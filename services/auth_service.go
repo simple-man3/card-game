@@ -69,24 +69,40 @@ func (as AuthService) checkPasswordHash(password, hashedPassword string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
 }
 
-func (as AuthService) VerifyToken(token string) (, error) {
+func (as AuthService) VerifyToken(token string) (*dto.JwtPayload, error) {
 	parsedToken, err := jwt.ParseWithClaims(token, &dto.JwtPayload{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.EnvInstance.JwtSecret), nil
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !parsedToken.Valid {
-		return errors.New("invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	jwtPayload := parsedToken.Claims.(*dto.JwtPayload)
 
 	if time.Now().After(jwtPayload.RegisteredClaims.ExpiresAt.Time) {
-		return errors.New("token expired")
+		return nil, errors.New("token expired")
 	}
+
+	return jwtPayload, nil
+}
+
+func (as AuthService) AuthFromToken(token string) error {
+	jwtPayload, err := as.VerifyToken(token)
+	if err != nil {
+		return err
+	}
+
+	user := &models.User{Email: jwtPayload.Email}
+	if err = as.UserService.GetUser(user, []string{}); err != nil {
+		return err
+	}
+
+	models.AuthUser = user
 
 	return nil
 }

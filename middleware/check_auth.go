@@ -4,27 +4,31 @@ import (
 	"card-game/responses"
 	"card-game/services"
 	"card-game/session"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 )
 
 func CheckAuth(c *fiber.Ctx) error {
 	sess, _ := session.Store.Get(c)
 
-	token := c.Get("Authorization")
+	headToken := c.Get("Authorization")
 	sessToken := sess.Get("Authorization")
 
-	if token == "" && sessToken == nil {
+	if headToken == "" && sessToken == nil {
 		return responses.ForbiddenResponse(c)
 	}
 
 	authService := services.NewAuthService()
-	if token != "" {
-		authService.VerifyToken(token)
+	var token string
+
+	if headToken != "" {
+		token = headToken
+	} else {
+		token = sessToken.(string)
 	}
 
-	fmt.Println(token)
-	fmt.Println(token)
+	if err := authService.AuthFromToken(token); err != nil {
+		return responses.ForbiddenResponse(c)
+	}
 
 	return c.Next()
 }
