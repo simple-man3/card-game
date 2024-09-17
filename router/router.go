@@ -19,7 +19,6 @@ func initApi(app *fiber.App) {
 	initUserRouters(v1)
 	initWalletRouters(v1)
 	initAuthRouters(v1)
-	initTransactionRouters(v1)
 }
 
 func initSwagger(app *fiber.App) {

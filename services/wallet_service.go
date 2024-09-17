@@ -3,12 +3,17 @@ package services
 import (
 	"card-game/database"
 	"card-game/models"
+	"gorm.io/gorm"
 )
 
-type WalletService struct{}
+type WalletService struct {
+	db *gorm.DB
+}
 
 func NewWalletService() *WalletService {
-	return &WalletService{}
+	return &WalletService{
+		db: database.DBConn,
+	}
 }
 
 func (ws WalletService) CreateWallet(wallet *models.Wallet) error {
@@ -23,12 +28,18 @@ func (ws WalletService) CreateWallet(wallet *models.Wallet) error {
 	return nil
 }
 
-func (ws WalletService) PutMoney(amount float64, wallet *models.Wallet) error {
-	db := database.DBConn
+func (ws WalletService) PutMoney(amount float64) error {
+	ws.db.Preload("Wallet").First(&models.AuthUser)
 
-	wallet.Balance += amount
 
-	res := db.Save(&wallet)
+
+	return nil
+}
+
+func (ws WalletService)
+
+func (ws WalletService) Update(wallet *models.Wallet) error {
+	res := ws.db.Save(&wallet)
 	if res.Error != nil {
 		return res.Error
 	}

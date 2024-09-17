@@ -17,10 +17,6 @@ import (
 func main() {
 	serv := server.NewServer()
 
-	if err := serv.InitRouters(); err != nil {
-		log.Fatal(err)
-	}
-
 	if err := config.InitEnv(); err != nil {
 		log.Fatal(err)
 	}
@@ -30,6 +26,10 @@ func main() {
 	}
 
 	if err := database.AutoMigrate(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := serv.InitRouters(); err != nil {
 		log.Fatal(err)
 	}
 
