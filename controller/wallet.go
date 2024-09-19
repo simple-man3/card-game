@@ -77,26 +77,9 @@ func (wc WalletController) PutMoney(c *fiber.Ctx) error {
 		return responses.ValidationErrToResponse(errs, c)
 	}
 
-	wc.walletService.PutMoney(request.Amount)
-	//bytes, err := json.Marshal(request)
-	//if err != nil {
-	//	return responses.ServiceErrorToResponse(err)
-	//}
+	if err := wc.walletService.PutMoney(request.Amount); err != nil {
+		return responses.ValidationErrToResponse(err, c)
+	}
 
-	//var wallet *models.Wallet
-	//if err := json.Unmarshal(bytes, &wallet); err != nil {
-	//	return responses.ServiceErrorToResponse(err)
-	//}
-	//
-	//if err := wc.walletService.CreateWallet(wallet); err != nil {
-	//	return responses.ServiceErrorToResponse(err)
-	//}
-	//
-	//wallet, err = wc.walletService.GetWalletById(wallet.ID, models.AuthUser.ID, []string{"User"})
-	//if err != nil {
-	//	return responses.ServiceErrorToResponse(err)
-	//}
-
-	//return c.Status(fiber.StatusCreated).JSON(wallet)
-	return c.SendStatus(fiber.StatusCreated)
+	return c.SendStatus(fiber.StatusOK)
 }

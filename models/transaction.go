@@ -1,12 +1,15 @@
 package models
 
-import "time"
+import (
+	"card-game/consts"
+	"time"
+)
 
 type Transaction struct {
 	ID       uint `gorm:"primarykey"`
 	WalletId uint `gorm:"index"`
 	Sum      float64
-	Action   string
+	Action   consts.TrxAction
 
 	Wallet Wallet `json:"wallet"`
 
