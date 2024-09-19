@@ -4,6 +4,7 @@ import (
 	"card-game/consts"
 	"card-game/database"
 	"card-game/models"
+	"errors"
 	"gorm.io/gorm"
 )
 
@@ -31,14 +32,14 @@ func (ws WalletService) CreateWallet(wallet *models.Wallet) error {
 	return nil
 }
 
-func (ws WalletService) PutMoney(amount float64) error {
-	ws.db.Preload("Wallet").First(&models.AuthUser)
+func (ws WalletService) PutMoney(amount float64, user models.User) error {
+	ws.db.Preload("Wallet").First(&user)
 
-	models.AuthUser.Wallet.Balance += amount
+	user.Wallet.Balance += amount
 
 	tx := ws.db.Begin()
 	transactionDto := ws.fillTransactionToCreate(
-		models.AuthUser.Wallet.ID,
+		user.Wallet.ID,
 		amount,
 		consts.PutMoney,
 	)
@@ -47,7 +48,7 @@ func (ws WalletService) PutMoney(amount float64) error {
 		return err
 	}
 
-	if err := ws.Update(models.AuthUser.Wallet); err != nil {
+	if err := ws.Update(user.Wallet); err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -78,15 +79,31 @@ func (ws WalletService) Update(wallet *models.Wallet) error {
 	return nil
 }
 
-func (ws WalletService) TakeMoney(amount float64, wallet *models.Wallet) error {
-	db := database.DBConn
+func (ws WalletService) WithdrawMoney(amount float64, user models.User) error {
+	ws.db.Preload("Wallet").First(&user)
 
-	wallet.Balance -= amount
-
-	res := db.Save(&wallet)
-	if res.Error != nil {
-		return res.Error
+	user.Wallet.Balance -= amount
+	if user.Wallet.Balance < 0 {
+		return errors.New("Недостаточно денег")
 	}
+
+	tx := ws.db.Begin()
+	transactionDto := ws.fillTransactionToCreate(
+		user.Wallet.ID,
+		amount,
+		consts.WithdrawMoney,
+	)
+	if _, err := ws.trxService.Create(&transactionDto); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := ws.Update(user.Wallet); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
 
 	return nil
 }

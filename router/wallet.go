@@ -14,4 +14,5 @@ func initWalletRouters(router fiber.Router) {
 	group.Get("/:id<int>", walletController.Get)
 	group.Post("/", walletController.CreateWallet)
 	group.Post("/put-money", walletController.PutMoney)
+	group.Post("/withdraw-money", walletController.WithdrawMoney)
 }

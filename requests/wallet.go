@@ -8,4 +8,7 @@ type (
 	PutMoneyRequest struct {
 		Amount float64 `validate:"required,min=1" json:"amount"`
 	}
+	WithDrawMoneyRequest struct {
+		Amount float64 `validate:"required,min=1" json:"amount"`
+	}
 )

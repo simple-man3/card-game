@@ -77,8 +77,26 @@ func (wc WalletController) PutMoney(c *fiber.Ctx) error {
 		return responses.ValidationErrToResponse(errs, c)
 	}
 
-	if err := wc.walletService.PutMoney(request.Amount); err != nil {
+	if err := wc.walletService.PutMoney(request.Amount, *models.AuthUser); err != nil {
 		return responses.ValidationErrToResponse(err, c)
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
+
+func (wc WalletController) WithdrawMoney(c *fiber.Ctx) error {
+	var request requests.WithDrawMoneyRequest
+
+	if err := c.BodyParser(&request); err != nil {
+		return responses.BodyParseErrToResponse()
+	}
+
+	if errs := validator.Validator.Struct(request); errs != nil {
+		return responses.ValidationErrToResponse(errs, c)
+	}
+
+	if err := wc.walletService.WithdrawMoney(request.Amount, *models.AuthUser); err != nil {
+		return responses.ServiceErrorToResponse(err)
 	}
 
 	return c.SendStatus(fiber.StatusOK)
