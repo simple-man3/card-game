@@ -12,7 +12,7 @@ func NewTransactionService() *TransactionService {
 	return &TransactionService{}
 }
 
-func (ts TransactionService) CreateTransaction(trx *models.Transaction) (*models.Transaction, error) {
+func (ts TransactionService) Create(trx *models.Transaction) (*models.Transaction, error) {
 	db := database.DBConn
 
 	res := db.Create(&trx)

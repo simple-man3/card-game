@@ -65,3 +65,21 @@ func (wc WalletController) Get(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(wallet)
 }
+
+func (wc WalletController) PutMoney(c *fiber.Ctx) error {
+	var request requests.PutMoneyRequest
+
+	if err := c.BodyParser(&request); err != nil {
+		return responses.BodyParseErrToResponse()
+	}
+
+	if errs := validator.Validator.Struct(request); errs != nil {
+		return responses.ValidationErrToResponse(errs, c)
+	}
+
+	if err := wc.walletService.PutMoney(request.Amount); err != nil {
+		return responses.ValidationErrToResponse(err, c)
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
